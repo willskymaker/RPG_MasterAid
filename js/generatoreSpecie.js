@@ -17,6 +17,7 @@ export function initGeneratoreSpecie() {
   const resetBonus = () => {
     bonusSelezionati = {};
     aggiornaBonusUI();
+    salvaInScheda();
   };
 
   const aggiornaBonusUI = () => {
@@ -61,10 +62,17 @@ export function initGeneratoreSpecie() {
         }
 
         aggiornaBonusUI();
+        salvaInScheda();
       });
       wrapper.appendChild(btn);
     });
     return wrapper;
+  };
+
+  const salvaInScheda = () => {
+    window.schedaPersonaggio = window.schedaPersonaggio || {};
+    schedaPersonaggio.specie = select.value || null;
+    schedaPersonaggio.bonusSpecie = bonusSelezionati;
   };
 
   const select = document.createElement('select');
@@ -103,12 +111,14 @@ export function initGeneratoreSpecie() {
     output.textContent = `🧬 Specie: ${scelta}`;
     bonusContainer.style.display = 'block';
     resetBonus();
+    salvaInScheda();
   });
 
   select.addEventListener('change', () => {
     output.textContent = `🧬 Specie: ${select.value}`;
     bonusContainer.style.display = 'block';
     resetBonus();
+    salvaInScheda();
   });
 
   bonusContainer.appendChild(radioWrapper);
