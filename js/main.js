@@ -5,6 +5,7 @@ import { initGeneratoreClassi } from './generatoreClassi.js';
 import { initGeneratoreAllineamento } from './generatoreAllineamento.js';
 import { initGeneratoreBackground } from './generatoreBackground.js';
 import { initGeneratoreCaratteristiche } from './generatoreCaratteristiche.js';
+import { initGeneratoreLivello } from './generatoreLivello.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initTiradadi();
@@ -14,4 +15,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initGeneratoreAllineamento();
   initGeneratoreBackground();
   initGeneratoreCaratteristiche();
+  initGeneratoreLivello();
 });
