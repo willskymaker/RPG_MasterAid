@@ -1,15 +1,15 @@
 export function initGeneratoreAllineamento() {
   const container = document.getElementById('generatore-allineamento-container');
   const output = document.getElementById('generatore-allineamento-output');
-  const btn = document.greateElement('button');
+  const btn = document.createElement('button');
   btn.textContent = "Genera Allineamento";
 
   const allineamenti = [
-    "Legale Buono"
-    "Neutrale Buono"
-    "Caotico Buono"
-    "Legale Neutrale"
-     "Neutrale Puro",
+    "Legale Buono",
+    "Neutrale Buono",
+    "Caotico Buono",
+    "Legale Neutrale",
+    "Neutrale Puro",
     "Caotico Neutrale",
     "Legale Malvagio",
     "Neutrale Malvagio",
@@ -23,3 +23,4 @@ export function initGeneratoreAllineamento() {
 
   container.appendChild(btn);
 }
+
