@@ -1,10 +1,8 @@
 export function initGeneratoreBackground() {
   const container = document.getElementById('generatore-background-container');
   const output = document.getElementById('generatore-background-output');
-  const btn = document.createElement('button');
-  btn.textContent = "Genera Background";
 
-  const backgroundList = [
+  const backgrounds = [
     {
       nome: "Accolito",
       descrizione: "Cresciuto in un tempio, conosci riti sacri, liturgie e credi religiosi."
@@ -75,10 +73,39 @@ export function initGeneratoreBackground() {
     }
   ];
 
-  btn.addEventListener('click', () => {
-    const bg = backgroundList[Math.floor(Math.random() * backgroundList.length)];
-    output.innerHTML = `📜 <strong>${bg.nome}</strong><br><em>${bg.descrizione}</em>`;
+  const select = document.createElement('select');
+  const optionDefault = document.createElement('option');
+  optionDefault.textContent = "-- Seleziona un background --";
+  optionDefault.disabled = true;
+  optionDefault.selected = true;
+  select.appendChild(optionDefault);
+
+  backgrounds.forEach(bg => {
+    const opt = document.createElement('option');
+    opt.value = bg.nome;
+    opt.textContent = bg.nome;
+    select.appendChild(opt);
   });
 
-  container.appendChild(btn);
+  const btnRandom = document.createElement('button');
+  btnRandom.textContent = "🎲 Genera casualmente";
+
+  const mostraOutput = (nome) => {
+    const bg = backgrounds.find(b => b.nome === nome);
+    output.innerHTML = `📜 <strong>${bg.nome}</strong><br><em>${bg.descrizione}</em>`;
+  };
+
+  btnRandom.addEventListener('click', () => {
+    const scelta = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    select.value = scelta.nome;
+    mostraOutput(scelta.nome);
+  });
+
+  select.addEventListener('change', () => {
+    mostraOutput(select.value);
+  });
+
+  container.appendChild(select);
+  container.appendChild(btnRandom);
 }
+
