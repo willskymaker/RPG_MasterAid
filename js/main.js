@@ -6,6 +6,7 @@ import { initGeneratoreAllineamento } from './generatoreAllineamento.js';
 import { initGeneratoreBackground } from './generatoreBackground.js';
 import { initGeneratoreCaratteristiche } from './generatoreCaratteristiche.js';
 import { initGeneratoreLivello } from './generatoreLivello.js';
+import { initGeneratoreHpCaVelocita } from './generatoreHpCaVelocita.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initTiradadi();
@@ -16,4 +17,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initGeneratoreBackground();
   initGeneratoreCaratteristiche();
   initGeneratoreLivello();
+  initGeneratoreHpCaVelocita();
 });
