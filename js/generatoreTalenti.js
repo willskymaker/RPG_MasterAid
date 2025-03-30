@@ -5,122 +5,110 @@ export function initGeneratoreTalenti() {
   window.schedaPersonaggio = window.schedaPersonaggio || {};
   schedaPersonaggio.talenti = [];
 
-  const talentiDisponibili = [
-    {
-      nome: "Robusto",
-      descrizione: "Ottieni +1 a COS. I tuoi PF massimi aumentano di 1 per livello.",
-      requisiti: { livello: 4 }
-    },
+  const talenti = [
     {
       nome: "Allerta",
-      descrizione: "Ottieni +5 all'iniziativa. Non puoi essere sorpreso mentre sei cosciente.",
-      requisiti: { livello: 4 }
+      descrizione: "Hai un bonus di +5 all’iniziativa e non puoi essere sorpreso.",
+      prerequisiti: {}
     },
     {
-      nome: "Maestro delle Armi",
-      descrizione: "Ottieni competenza con 2 armi a tua scelta e +1 a FOR o DES.",
-      requisiti: { livello: 4, forzaMin: 13 }
+      nome: "Atletico",
+      descrizione: "Aumenti FOR o DES di 1. Raddoppi le prove di arrampicata, salto e nuoto.",
+      prerequisiti: {}
     },
     {
-      nome: "Incantatore Esperto",
-      descrizione: "Ottieni +1 a INT o SAG. Conosci un incantesimo aggiuntivo.",
-      requisiti: { livello: 4, classi: ["Mago", "Chierico", "Stregone", "Druido", "Warlock", "Paladino"] }
+      nome: "Incantatore da Guerra",
+      descrizione: "Hai vantaggio nei tiri salvezza per mantenere concentrazione.",
+      prerequisiti: { tipoClasse: "caster-pieno" }
     },
     {
-      nome: "Duelista Difensivo",
-      descrizione: "Richiede DES ≥ 13. Aumenti la tua CA mentre impugni un'arma leggera.",
-      requisiti: { livello: 4, destrezzaMin: 13 }
+      nome: "Duro a Morire",
+      descrizione: "Aumenti di 1 la tua COS. Ottieni PF extra ogni livello.",
+      prerequisiti: { caratteristica: { COS: 13 } }
+    },
+    {
+      nome: "Maestro d'Armi",
+      descrizione: "Ottieni manovre speciali con armi da mischia pesanti.",
+      prerequisiti: { caratteristica: { FOR: 13 } }
     }
+    // Aggiungine altri man mano...
   ];
 
-  const livelloPg = schedaPersonaggio.livello || 1;
-  const classePg = schedaPersonaggio.classe || "";
-  const caratteristiche = schedaPersonaggio.caratteristiche || {};
+  function livelloConsenteTalenti() {
+    const liv = schedaPersonaggio.livello || 1;
+    return Math.floor(liv / 4); // slot a liv 4, 8, 12, 16, 19
+  }
 
-  // Calcola quanti slot ASI/talento sono disponibili (2 punti ASI per soglia)
-  const soglie = [4, 8, 12, 16, 19];
-  const slotTotali = soglie.filter(lv => lv <= livelloPg).length;
+  function verificaPrerequisiti(talento) {
+    const scheda = schedaPersonaggio;
 
-  const talentiSelezionati = [];
+    if (talento.prerequisiti.tipoClasse && talento.prerequisiti.tipoClasse !== scheda.tipoClasse)
+      return false;
 
-  const titolo = document.createElement('p');
-  titolo.innerHTML = `🧠 Hai <strong>${slotTotali}</strong> slot utilizzabili per ASI o Talenti.`;
-  container.appendChild(titolo);
+    if (talento.prerequisiti.caratteristica) {
+      for (const [stat, val] of Object.entries(talento.prerequisiti.caratteristica)) {
+        if (!scheda.caratteristiche || (scheda.caratteristiche[stat] || 0) < val)
+          return false;
+      }
+    }
 
-  for (let i = 0; i < slotTotali; i++) {
-    const wrapper = document.createElement('div');
-    wrapper.style.marginBottom = "10px";
+    return true;
+  }
 
+  const checkboxList = document.createElement('div');
+
+  talenti.forEach(talento => {
     const label = document.createElement('label');
-    label.textContent = `Slot Talento #${i + 1}`;
-    const select = document.createElement('select');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = talento.nome;
 
-    const optDefault = document.createElement('option');
-    optDefault.textContent = "-- Nessun talento selezionato --";
-    optDefault.value = "";
-    select.appendChild(optDefault);
+    const slotMassimo = livelloConsenteTalenti();
 
-    talentiDisponibili.forEach(talento => {
-      const opt = document.createElement('option');
-      opt.value = talento.nome;
-      opt.textContent = talento.nome;
+    checkbox.disabled = !verificaPrerequisiti(talento);
 
-      const r = talento.requisiti;
-      let disabilitato = false;
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        if (schedaPersonaggio.talenti.length >= slotMassimo) {
+          checkbox.checked = false;
+          alert(`Hai già selezionato il numero massimo di talenti (${slotMassimo}).`);
+          return;
+        }
+        schedaPersonaggio.talenti.push({
+          nome: talento.nome,
+          descrizione: talento.descrizione
+        });
 
-      if (r.livello && livelloPg < r.livello) disabilitato = true;
-      if (r.forzaMin && (caratteristiche.FOR || 0) < r.forzaMin) disabilitato = true;
-      if (r.destrezzaMin && (caratteristiche.DES || 0) < r.destrezzaMin) disabilitato = true;
-      if (r.classi && !r.classi.includes(classePg)) disabilitato = true;
-
-      if (disabilitato) {
-        opt.disabled = true;
-        opt.textContent += " (non disponibile)";
-      }
-
-      select.appendChild(opt);
-    });
-
-    // Assegna evento di selezione
-    select.addEventListener('change', () => {
-      const talentoNome = select.value;
-      const talentoInfo = talentiDisponibili.find(t => t.nome === talentoNome);
-
-      if (talentoNome && talentoInfo) {
-        talentiSelezionati[i] = {
-          nome: talentoInfo.nome,
-          descrizione: talentoInfo.descrizione
-        };
+        // Disattiva ASI
+        schedaPersonaggio.asiBloccato = true;
       } else {
-        talentiSelezionati[i] = null;
+        schedaPersonaggio.talenti = schedaPersonaggio.talenti.filter(t => t.nome !== talento.nome);
+
+        // Se non hai più talenti selezionati, riattiva ASI
+        if (schedaPersonaggio.talenti.length === 0) {
+          schedaPersonaggio.asiBloccato = false;
+        }
       }
 
-      aggiornaSchedaTalenti();
+      aggiornaOutput();
     });
 
-    wrapper.appendChild(label);
-    wrapper.appendChild(select);
-    container.appendChild(wrapper);
-  }
-
-  function aggiornaSchedaTalenti() {
-    schedaPersonaggio.talenti = talentiSelezionati.filter(t => t);
-    schedaPersonaggio.talento = true; // Disattiva ASI
-    aggiornaOutput();
-  }
+    label.appendChild(checkbox);
+    label.append(` ${talento.nome} — ${talento.descrizione}`);
+    checkboxList.appendChild(label);
+    checkboxList.appendChild(document.createElement('br'));
+  });
 
   function aggiornaOutput() {
     if (schedaPersonaggio.talenti.length === 0) {
-      output.innerHTML = "<em>Nessun talento selezionato.</em>";
-      return;
+      output.innerHTML = `✨ Nessun talento selezionato.`;
+    } else {
+      const lista = schedaPersonaggio.talenti.map(t => `<li><strong>${t.nome}</strong>: ${t.descrizione}</li>`).join("");
+      output.innerHTML = `✨ Talenti selezionati:<ul>${lista}</ul>`;
     }
-
-    output.innerHTML = "<strong>🎭 Talenti selezionati:</strong><ul style='margin-top:5px'>";
-    schedaPersonaggio.talenti.forEach(t => {
-      output.innerHTML += `<li><strong>${t.nome}</strong>: <em>${t.descrizione}</em></li>`;
-    });
-    output.innerHTML += "</ul>";
   }
 
-  aggiornaSchedaTalenti();
+  container.appendChild(checkboxList);
+  container.appendChild(output);
 }
+
