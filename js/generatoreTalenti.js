@@ -55,7 +55,7 @@ const talenti = [
     nome: "Mobile",
     descrizione: "Velocità +10 piedi, nessun attacco di opportunità se colpisci in mischia, ignorazione terreno difficile durante scatti.",
     prerequisiti: {}
-  }
+  },
     {
     nome: "Duro a Morire",
     descrizione: "I tuoi punti ferita massimi aumentano di 2 per ogni livello.",
@@ -105,7 +105,7 @@ const talenti = [
     nome: "Incantatore da Guerra",
     descrizione: "Hai vantaggio nei TS per mantenere concentrazione, puoi lanciare come reazione.",
     prerequisiti: { tipoClasse: "caster-pieno" }
-  }
+  },
   {
     nome: "Maestro delle Armature Medie",
     descrizione: "Aumenti la tua DES di 1 (massimo 14) e ottieni competenza nelle armature medie.",
@@ -155,7 +155,7 @@ const talenti = [
     nome: "Pelle di Pietra",
     descrizione: "Aumenti COS di 1. Ottieni +1 CA se non indossi armatura pesante.",
     prerequisiti: { caratteristica: { COS: 13 } }
-  }
+  },
   {
     nome: "Combattente Versatile",
     descrizione: "Aumenti FOR o DES di 1. Puoi cambiare arma o stile al volo come azione bonus.",
@@ -205,7 +205,7 @@ const talenti = [
     nome: "Implacabile",
     descrizione: "Una volta per riposo lungo, puoi rimanere a 1 PF invece che scendere a 0.",
     prerequisiti: {}
-  }
+  },
   {
     nome: "Combattente Corazzato",
     descrizione: "Aumenti FOR o COS di 1. Ignori penalità alle prove di Destrezza quando indossi armature pesanti.",
@@ -255,7 +255,7 @@ const talenti = [
     nome: "Studente di Magia",
     descrizione: "Impari 2 trucchetti e un incantesimo da un'altra lista di classe.",
     prerequisiti: { tipoClasse: "caster-pieno" }
-  }
+  },
 
   //inserisci qui altri talenti
 ];
