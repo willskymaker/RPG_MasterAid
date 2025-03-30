@@ -80,4 +80,27 @@ button {
 button:hover {
   background-color: #512ba1;
 }
+.scheda-output {
+  background-color: #fdf5e6;
+  border: 2px solid #8b4513;
+  padding: 20px;
+  border-radius: 10px;
+  font-family: Georgia, serif;
+  margin-top: 20px;
+  box-shadow: 2px 2px 10px #ccc;
+}
+
+.scheda-output h3 {
+  margin-top: 10px;
+  color: #6b3e26;
+}
+
+.scheda-output ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.scheda-output li {
+  margin-bottom: 5px;
+}
 
