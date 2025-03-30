@@ -150,8 +150,10 @@ export function initGeneratoreClassi() {
     schedaPersonaggio.trattiClasse = datiClasse.tratti;
     schedaPersonaggio.tipoClasse = datiClasse.tipo;
 
-    const { abilitaDisponibili, numeroAbilita } = datiClasse;
+    // 🔁 Aggiorna dinamicamente i talenti disponibili
+    if (window.aggiornaTalenti) window.aggiornaTalenti();
 
+    const { abilitaDisponibili, numeroAbilita } = datiClasse;
     abilitaBox.innerHTML = `<p>Seleziona ${numeroAbilita} abilità:</p>`;
     const selezionate = [];
 

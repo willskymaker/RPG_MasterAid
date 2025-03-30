@@ -2,7 +2,6 @@ export function initGeneratoreCaratteristiche() {
   const container = document.getElementById('generatore-caratteristiche-container');
   const output = document.getElementById('generatore-caratteristiche-output');
 
-  // 🔒 Assicura che l'oggetto globale schedaPersonaggio esista
   window.schedaPersonaggio = window.schedaPersonaggio || {};
 
   const caratteristiche = ['FOR', 'DES', 'COS', 'INT', 'SAG', 'CAR'];
@@ -93,13 +92,15 @@ export function initGeneratoreCaratteristiche() {
           const totale = valori[stat] + asiAggiunti[stat];
           if (asiUsati < asiTotali && totale < 20) {
             asiAggiunti[stat]++;
-            // Se viene usato un ASI, disattiva eventuale talento
             schedaPersonaggio.talento = false;
           }
         }
 
         aggiornaOutput();
         salvaInScheda();
+
+        // ✅ AGGIUNTO: aggiorna talenti se cambia qualcosa
+        if (window.aggiornaTalenti) window.aggiornaTalenti();
       };
     });
 

@@ -112,6 +112,7 @@ export function initGeneratoreSpecie() {
     bonusContainer.style.display = 'block';
     resetBonus();
     salvaInScheda();
+    if (window.aggiornaTalenti) window.aggiornaTalenti(); // ✅ AGGIUNTO
   });
 
   select.addEventListener('change', () => {
@@ -119,6 +120,7 @@ export function initGeneratoreSpecie() {
     bonusContainer.style.display = 'block';
     resetBonus();
     salvaInScheda();
+    if (window.aggiornaTalenti) window.aggiornaTalenti(); // ✅ AGGIUNTO
   });
 
   bonusContainer.appendChild(radioWrapper);

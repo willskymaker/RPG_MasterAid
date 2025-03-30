@@ -27,6 +27,7 @@ export function initGeneratoreLivello() {
 
   select.addEventListener('change', () => {
     schedaPersonaggio.livello = parseInt(select.value);
+    if (window.aggiornaTalenti) window.aggiornaTalenti();
     output.textContent = `🎚️ Livello selezionato: ${schedaPersonaggio.livello}`;
   });
 

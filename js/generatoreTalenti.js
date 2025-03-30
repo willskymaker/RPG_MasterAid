@@ -5,6 +5,13 @@ export function initGeneratoreTalenti() {
   window.schedaPersonaggio = window.schedaPersonaggio || {};
   schedaPersonaggio.talenti = [];
 
+  // Salviamo la lista checkbox per eventuali filtri
+  let checkboxList;
+
+  // Checkbox filtro
+  let filtroCheckbox;
+
+  // Lista di talenti ufficiali
 const talenti = [
   {
     nome: "Allerta",
@@ -260,74 +267,84 @@ const talenti = [
   //inserisci qui altri talenti
 ];
 
-  function livelloConsenteTalenti() {
-    const liv = schedaPersonaggio.livello || 1;
-    return Math.floor(liv / 4); // slot a liv 4, 8, 12, 16, 19
-  }
-
+  // Verifica i prerequisiti per ogni talento
   function verificaPrerequisiti(talento) {
     const scheda = schedaPersonaggio;
 
-    if (talento.prerequisiti.tipoClasse && talento.prerequisiti.tipoClasse !== scheda.tipoClasse)
-      return false;
+    if (talento.prerequisiti.tipoClasse && talento.prerequisiti.tipoClasse !== scheda.tipoClasse) return false;
+    if (talento.prerequisiti.classe && talento.prerequisiti.classe !== scheda.classe) return false;
+    if (talento.prerequisiti.specie && talento.prerequisiti.specie !== scheda.specie) return false;
+    if (talento.prerequisiti.livello && (scheda.livello || 1) < talento.prerequisiti.livello) return false;
 
     if (talento.prerequisiti.caratteristica) {
       for (const [stat, val] of Object.entries(talento.prerequisiti.caratteristica)) {
-        if (!scheda.caratteristiche || (scheda.caratteristiche[stat] || 0) < val)
-          return false;
+        if (!scheda.caratteristiche || (scheda.caratteristiche[stat] || 0) < val) return false;
       }
     }
 
     return true;
   }
 
-  const checkboxList = document.createElement('div');
+  // Calcola slot disponibili
+  function livelloConsenteTalenti() {
+    const liv = schedaPersonaggio.livello || 1;
+    return Math.floor(liv / 4); // Slot ai livelli 4, 8, 12, 16, 19
+  }
 
-  talenti.forEach(talento => {
-    const label = document.createElement('label');
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.value = talento.nome;
+  // Ricostruisce l'elenco dei talenti
+  function renderTalenti() {
+    // Svuota
+    if (checkboxList) checkboxList.remove();
+    checkboxList = document.createElement('div');
 
-    const slotMassimo = livelloConsenteTalenti();
+    talenti.forEach(talento => {
+      const label = document.createElement('label');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = talento.nome;
 
-    const isDisponibile = verificaPrerequisiti(talento);
-    checkbox.disabled = !isDisponibile;
-    if (!isDisponibile) label.classList.add('talento-disabilitato');
+      const slotMassimo = livelloConsenteTalenti();
+      const isDisponibile = verificaPrerequisiti(talento);
 
+      checkbox.disabled = !isDisponibile;
+      if (!isDisponibile) label.classList.add('talento-disabilitato');
+      else label.classList.remove('talento-disabilitato');
 
-    checkbox.addEventListener('change', () => {
-      if (checkbox.checked) {
-        if (schedaPersonaggio.talenti.length >= slotMassimo) {
-          checkbox.checked = false;
-          alert(`Hai già selezionato il numero massimo di talenti (${slotMassimo}).`);
-          return;
+      checkbox.checked = schedaPersonaggio.talenti.some(t => t.nome === talento.nome);
+
+      checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+          if (schedaPersonaggio.talenti.length >= slotMassimo) {
+            checkbox.checked = false;
+            alert(`Hai già selezionato il numero massimo di talenti (${slotMassimo}).`);
+            return;
+          }
+          schedaPersonaggio.talenti.push({
+            nome: talento.nome,
+            descrizione: talento.descrizione
+          });
+          schedaPersonaggio.asiBloccato = true;
+        } else {
+          schedaPersonaggio.talenti = schedaPersonaggio.talenti.filter(t => t.nome !== talento.nome);
+          if (schedaPersonaggio.talenti.length === 0) {
+            schedaPersonaggio.asiBloccato = false;
+          }
         }
-        schedaPersonaggio.talenti.push({
-          nome: talento.nome,
-          descrizione: talento.descrizione
-        });
+        aggiornaOutput();
+      });
 
-        // Disattiva ASI
-        schedaPersonaggio.asiBloccato = true;
-      } else {
-        schedaPersonaggio.talenti = schedaPersonaggio.talenti.filter(t => t.nome !== talento.nome);
-
-        // Se non hai più talenti selezionati, riattiva ASI
-        if (schedaPersonaggio.talenti.length === 0) {
-          schedaPersonaggio.asiBloccato = false;
-        }
-      }
-
-      aggiornaOutput();
+      label.appendChild(checkbox);
+      label.append(` ${talento.nome} — ${talento.descrizione}`);
+      checkboxList.appendChild(label);
+      checkboxList.appendChild(document.createElement('br'));
     });
 
-    label.appendChild(checkbox);
-    label.append(` ${talento.nome} — ${talento.descrizione}`);
-    checkboxList.appendChild(label);
-    checkboxList.appendChild(document.createElement('br'));
-  });
+    container.appendChild(checkboxList);
+    aggiornaOutput();
+    applicaFiltro(); // Rende il filtro funzionante
+  }
 
+  // Output
   function aggiornaOutput() {
     if (schedaPersonaggio.talenti.length === 0) {
       output.innerHTML = `✨ Nessun talento selezionato.`;
@@ -337,7 +354,38 @@ const talenti = [
     }
   }
 
-  container.appendChild(checkboxList);
-  container.appendChild(output);
-}
+  // Filtro visivo dei talenti
+  function creaFiltro() {
+    filtroCheckbox = document.createElement('input');
+    filtroCheckbox.type = 'checkbox';
+    filtroCheckbox.id = 'filtra-talenti';
 
+    const filtroLabel = document.createElement('label');
+    filtroLabel.textContent = " Mostra solo talenti selezionabili";
+    filtroLabel.prepend(filtroCheckbox);
+    filtroLabel.style.display = "block";
+    filtroLabel.style.marginBottom = "10px";
+
+    filtroCheckbox.addEventListener('change', () => {
+      applicaFiltro();
+    });
+
+    container.appendChild(filtroLabel);
+  }
+
+  function applicaFiltro() {
+    if (!filtroCheckbox || !checkboxList) return;
+    const tuttiLabel = checkboxList.querySelectorAll('label');
+    tuttiLabel.forEach(label => {
+      const disabilitato = label.classList.contains('talento-disabilitato');
+      label.style.display = (!filtroCheckbox.checked || !disabilitato) ? "block" : "none";
+    });
+  }
+
+  // Inizializzazione
+  creaFiltro();
+  renderTalenti();
+
+  // Funzione globale richiamabile per aggiornare dinamicamente
+  window.aggiornaTalenti = renderTalenti;
+}
