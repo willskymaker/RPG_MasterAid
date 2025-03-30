@@ -2,7 +2,6 @@ export function initGeneratoreLivello() {
   const container = document.getElementById('generatore-livello-container');
   const output = document.getElementById('generatore-livello-output');
 
-  // Inizializza schedaPersonaggio se non esiste
   window.schedaPersonaggio = window.schedaPersonaggio || {};
   schedaPersonaggio.livello = 1;
 
@@ -18,10 +17,9 @@ export function initGeneratoreLivello() {
   select.addEventListener('change', () => {
     schedaPersonaggio.livello = parseInt(select.value);
     output.textContent = `🎚️ Livello selezionato: ${schedaPersonaggio.livello}`;
-    // In futuro: trigger aggiornamenti su altri moduli
   });
 
   container.appendChild(select);
   output.textContent = `🎚️ Livello selezionato: ${schedaPersonaggio.livello}`;
-  container.appendChild(output);
 }
+
