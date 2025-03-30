@@ -1,17 +1,21 @@
-.griglia-moduli {
+/* Contenitore principale che utilizza Flexbox */
+#app {
   display: flex;
-  gap: 30px;
   flex-wrap: wrap;
+  gap: 20px;
   padding: 20px;
 }
 
+/* Stile per ciascuna colonna */
 .colonna {
-  flex: 1 1 400px;
+  flex: 1;
+  min-width: 300px; /* Assicura che le colonne non diventino troppo strette */
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+/* Stile per ciascuna sezione */
 section {
   background: #f9f9f9;
   border-radius: 12px;
