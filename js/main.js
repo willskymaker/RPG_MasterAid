@@ -4,6 +4,7 @@ import { initGeneratoreSpecie } from './generatoreSpecie.js';
 import { initGeneratoreClassi } from './generatoreClassi.js';
 import { initGeneratoreAllineamento } from './generatoreAllineamento.js';
 import { initGeneratoreBackground } from './generatoreBackground.js';
+import {initGeneratoreTalenti } from './generatoreTalenti.js';
 import { initGeneratoreCaratteristiche } from './generatoreCaratteristiche.js';
 import { initGeneratoreLivello } from './generatoreLivello.js';
 import { initGeneratoreHpCaVelocita } from './generatoreHpCaVelocita.js';
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGeneratoreClassi();
   initGeneratoreAllineamento();
   initGeneratoreBackground();
+  initGeneratoreTalenti();
   initGeneratoreCaratteristiche();
   initGeneratoreLivello();
   initGeneratoreHpCaVelocita();
