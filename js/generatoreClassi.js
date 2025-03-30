@@ -13,7 +13,7 @@ export function initGeneratoreClassi() {
     Ladro: { max: 4, abilita: ["Furtività", "Acrobazia", "Rapidità di mano", "Percezione"] },
     Guerriero: { max: 2, abilita: ["Atletica", "Sopravvivenza", "Intimidazione", "Percezione"] },
     Mago: { max: 2, abilita: ["Arcano", "Storia", "Indagare", "Religione"] }
-    // Aggiungeremo le altre man mano
+    // Aggiungi man mano le altre
   };
 
   const select = document.createElement('select');
@@ -71,18 +71,28 @@ export function initGeneratoreClassi() {
         }
 
         selectedLabel.textContent = `Abilità selezionate (${abilitaSelezionate.length}/${max}): ${abilitaSelezionate.join(", ")}`;
+        salvaInScheda();
       });
 
       label.appendChild(cb);
       label.appendChild(document.createTextNode(" " + nome));
       abilitaContainer.appendChild(label);
     });
+
+    salvaInScheda();
+  }
+
+  function salvaInScheda() {
+    window.schedaPersonaggio = window.schedaPersonaggio || {};
+    schedaPersonaggio.classe = select.value || null;
+    schedaPersonaggio.abilitaClasse = abilitaSelezionate;
   }
 
   select.addEventListener('change', () => {
     const classe = select.value;
     output.textContent = `🛡️ Classe: ${classe}`;
     mostraAbilita(classe);
+    salvaInScheda();
   });
 
   btnRandom.addEventListener('click', () => {
@@ -90,6 +100,7 @@ export function initGeneratoreClassi() {
     select.value = scelta;
     output.textContent = `🛡️ Classe: ${scelta}`;
     mostraAbilita(scelta);
+    salvaInScheda();
   });
 
   container.appendChild(select);
