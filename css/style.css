@@ -1,31 +1,107 @@
-/* Contenitore principale che utilizza Flexbox */
-#app {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+/* Reset base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
   padding: 20px;
 }
 
-/* Stile per ciascuna colonna */
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2em;
+  color: #222;
+}
+
+/* Layout a due colonne */
+.griglia-moduli {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
 .colonna {
-  flex: 1;
-  min-width: 300px; /* Assicura che le colonne non diventino troppo strette */
+  flex: 1 1 450px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  max-width: 600px;
 }
 
-/* Stile per ciascuna sezione */
+/* Modulo base */
 section {
-  background: #f9f9f9;
+  background: #ffffff;
   border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.08);
+  transition: all 0.2s ease-in-out;
+}
+
+section:hover {
+  box-shadow: 0 0 15px rgba(0,0,0,0.12);
 }
 
 h2 {
-  margin-top: 0;
+  margin-bottom: 12px;
   font-size: 1.2em;
-  color: #333;
+  color: #444;
+}
+
+/* Output box */
+#app div[id$="-output"] {
+  margin-top: 10px;
+  font-size: 0.95em;
+  color: #222;
+}
+
+/* Pulsanti e selettori */
+button, select {
+  font-size: 1em;
+  padding: 5px 10px;
+  margin: 3px 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover, select:hover {
+  background-color: #ddd;
+}
+
+button:disabled, select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Elenchi */
+ul {
+  padding-left: 20px;
+  margin-top: 5px;
+}
+
+li {
+  margin-bottom: 4px;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .griglia-moduli {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .colonna {
+    width: 100%;
+    max-width: 90%;
+  }
 }
 
