@@ -1,4 +1,4 @@
-import { dbBackground } from './js/data/dbBackground.js';
+import { dbBackground } from './data/dbBackground.js';
 
 export function initGeneratoreBackground() {
   const container = document.getElementById('generatore-background-container');
