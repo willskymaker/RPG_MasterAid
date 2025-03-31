@@ -1,23 +1,21 @@
 
 // js/generatoreSchedaFinale.js
 
-const { jsPDF } = window.jspdf || {};
-
 export function initGeneratoreSchedaFinale() {
   const container = document.getElementById('scheda-personaggio-output');
-  if (container) container.innerHTML = ''; // Rimuove ogni contenuto in pagina
-
-  window.aggiornaSchedaFinale = () => {}; // Funzione vuota per evitare errori
+  if (container) container.innerHTML = ''; // rimuove ogni contenuto in pagina
+  window.aggiornaSchedaFinale = () => {}; // disattivato
 }
 
-// ✅ Funzione corretta per esportare il PDF della scheda
+// ✅ Funzione per esportare il PDF
 export function esportaPDF(scheda) {
-  if (!window.jspdf || !window.jspdf.jsPDF) {
+  const jsPDF = window.jspdf?.jsPDF;
+  if (!jsPDF) {
     alert("Errore: jsPDF non disponibile.");
     return;
   }
 
-  const doc = new window.jspdf.jsPDF();
+  const doc = new jsPDF();
   let y = 10;
 
   const linee = [
