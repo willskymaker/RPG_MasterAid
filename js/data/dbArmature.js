@@ -1,4 +1,4 @@
-export const armature = [
+export const dbArmature = [
   // Armature leggere
   {
     nome: "Armatura di cuoio",
