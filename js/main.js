@@ -1,3 +1,4 @@
+
 import { initTiradadi } from './tiradadi.js';
 import { initGeneratoreNomi } from './generatoreNomi.js';
 import { initGeneratoreSpecie } from './generatoreSpecie.js';
@@ -9,7 +10,7 @@ import { initGeneratoreCaratteristiche } from './generatoreCaratteristiche.js';
 import { initGeneratoreLivello } from './generatoreLivello.js';
 import { initGeneratoreHpCaVelocita } from './generatoreHpCaVelocita.js';
 import { initGeneratoreEquipaggiamento } from './generatoreEquipaggiamento.js';
-import { initGeneratoreSchedaFinale } from './generatoreSchedaFinale.js';
+import { initGeneratoreSchedaFinale, esportaPDF } from './generatoreSchedaFinale.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Inizializza l'oggetto globale
@@ -28,10 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGeneratoreLivello();
   initGeneratoreHpCaVelocita();
   initGeneratoreEquipaggiamento();
-// Aspetta 100ms prima di inizializzare la scheda finale
-setTimeout(() => {
-  initGeneratoreSchedaFinale();
-}, 100);
+  initGeneratoreSchedaFinale(); // ora non genera HTML
 
   // Gestione modalità niubbo/pro
   const selettoreModalita = document.querySelectorAll('input[name="modalita"]');
@@ -54,7 +52,6 @@ setTimeout(() => {
 
     // Default in modalità niubbo
     if (modalita === 'niubbo') {
-      // Inserisce almeno 1 talento base se non presente
       if (!schedaPersonaggio.talenti || schedaPersonaggio.talenti.length === 0) {
         schedaPersonaggio.talenti = [{
           nome: "Allerta",
@@ -69,5 +66,7 @@ setTimeout(() => {
   }
 
   aggiornaModalitaUI(); // iniziale
-});
 
+  // Export manuale: window.esportaPDF disponibile per uso diretto
+  window.esportaPDF = esportaPDF;
+});
