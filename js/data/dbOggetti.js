@@ -1,4 +1,4 @@
-export const oggetti = [
+export const dbOggetti = [
   {
     "nome": "Kit da erborista",
     "categoria": "Strumenti",
