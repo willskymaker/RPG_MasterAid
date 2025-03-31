@@ -28,7 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initGeneratoreLivello();
   initGeneratoreHpCaVelocita();
   initGeneratoreEquipaggiamento();
+// Aspetta 100ms prima di inizializzare la scheda finale
+setTimeout(() => {
   initGeneratoreSchedaFinale();
+}, 100);
 
   // Gestione modalità niubbo/pro
   const selettoreModalita = document.querySelectorAll('input[name="modalita"]');
