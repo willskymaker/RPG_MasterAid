@@ -1,20 +1,10 @@
+import { dbBackground } from './js/data/dbBackground.js';
+
 export function initGeneratoreBackground() {
   const container = document.getElementById('generatore-background-container');
   const output = document.getElementById('generatore-background-output');
 
-  const backgroundList = {
-    "Accolito": "Hai passato la tua vita al servizio di un tempio specifico, imparando riti sacri e dogmi.",
-    "Criminale": "Hai un passato nel mondo del crimine. Sai come muoverti nell'ombra.",
-    "Eroe del Popolo": "Hai difeso la gente comune contro l'oppressione, diventando un simbolo di speranza.",
-    "Marinaio": "Hai trascorso anni solcando i mari e affrontando tempeste.",
-    "Sapiente": "Hai dedicato la tua vita allo studio di testi antichi, arti e scienze.",
-    "Artigiano Gildato": "Appartieni a una gilda di artigiani riconosciuta per maestria e tradizione.",
-    "Viandante": "Hai vissuto nella natura selvaggia, lontano dalla civiltà.",
-    "Nobile": "Sei nato in una famiglia importante e hai imparato le arti del comando e della diplomazia."
-    // Aggiungibili altri background
-  };
-
-  const backgroundNomi = Object.keys(backgroundList);
+  const backgroundNomi = dbBackground.map(bg => bg.nome);
 
   const select = document.createElement('select');
   const optionDefault = document.createElement('option');
@@ -33,17 +23,19 @@ export function initGeneratoreBackground() {
   const btnRandom = document.createElement('button');
   btnRandom.textContent = "🎲 Genera casualmente";
 
-  function aggiornaOutput(bg) {
-    const descrizione = backgroundList[bg];
-    output.innerHTML = `<strong>🎭 Background:</strong> ${bg}<br><em>${descrizione}</em>`;
-    salvaInScheda(bg, descrizione);
+  function aggiornaOutput(bgNome) {
+    const bg = dbBackground.find(el => el.nome === bgNome);
+    if (!bg) return;
+
+    output.innerHTML = `<strong>🎭 Background:</strong> ${bg.nome}<br><em>${bg.descrizione}</em>`;
+    salvaInScheda(bg);
   }
 
-  function salvaInScheda(nome, descrizione) {
+  function salvaInScheda(bg) {
     window.schedaPersonaggio = window.schedaPersonaggio || {};
     schedaPersonaggio.background = {
-      nome: nome,
-      descrizione: descrizione
+      nome: bg.nome,
+      descrizione: bg.descrizione
     };
   }
 
@@ -62,4 +54,3 @@ export function initGeneratoreBackground() {
   container.appendChild(btnRandom);
   container.appendChild(output);
 }
-
