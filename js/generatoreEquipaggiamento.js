@@ -8,71 +8,86 @@ export function initGeneratoreEquipaggiamento() {
   const output = document.getElementById('generatore-equipaggiamento-output');
 
   window.schedaPersonaggio = window.schedaPersonaggio || {};
-  schedaPersonaggio.equipaggiamento = [];
+  schedaPersonaggio.equipaggiamento = {
+    armi: [],
+    armatura: null,
+    oggetti: []
+  };
 
-  const maxArmi = 2;
-  const maxArmature = 1;
-  const maxOggetti = 3;
+  function creaCheckbox(item, categoria, limite) {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = item.nome;
 
-  function haProficienza(tipo) {
-    const prof = schedaPersonaggio.proficienze || [];
-    return prof.includes(tipo);
-  }
+    if (!puòUsare(item)) {
+      checkbox.disabled = true;
+      label.classList.add('disabilitato');
+    }
 
-  function creaBlocco(titolo, lista, tipo, max) {
-    const blocco = document.createElement('div');
-    const h3 = document.createElement('h3');
-    h3.textContent = titolo;
-    blocco.appendChild(h3);
-
-    lista.forEach(el => {
-      const label = document.createElement('label');
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.value = el.nome;
-
-      const profOk = !el.proficienza || haProficienza(el.proficienza);
-      checkbox.disabled = !profOk;
-      if (!profOk) label.classList.add('equip-disabilitato');
-
-      checkbox.checked = schedaPersonaggio.equipaggiamento.some(e => e.nome === el.nome);
-
-      checkbox.addEventListener('change', () => {
-        const selezionati = schedaPersonaggio.equipaggiamento.filter(e => e.tipo === tipo);
-        if (checkbox.checked) {
-          if (selezionati.length >= max) {
-            checkbox.checked = false;
-            alert(`Puoi selezionare solo ${max} ${tipo}.`);
-            return;
-          }
-          schedaPersonaggio.equipaggiamento.push({ ...el, tipo });
-        } else {
-          schedaPersonaggio.equipaggiamento = schedaPersonaggio.equipaggiamento.filter(e => e.nome !== el.nome);
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        const selezione = schedaPersonaggio.equipaggiamento[categoria];
+        if (categoria === 'armatura' && selezione !== null) {
+          checkbox.checked = false;
+          alert('Puoi selezionare solo 1 armatura.');
+          return;
+        } else if (Array.isArray(selezione) && selezione.length >= limite) {
+          checkbox.checked = false;
+          alert(`Puoi selezionare solo ${limite} ${categoria}.`);
+          return;
         }
-        aggiornaOutput();
-      });
 
-      label.appendChild(checkbox);
-      label.append(` ${el.nome} — ${el.descrizione}`);
-      blocco.appendChild(label);
-      blocco.appendChild(document.createElement('br'));
+        if (categoria === 'armatura') {
+          schedaPersonaggio.equipaggiamento.armatura = item.nome;
+        } else {
+          selezione.push(item.nome);
+        }
+      } else {
+        if (categoria === 'armatura') {
+          schedaPersonaggio.equipaggiamento.armatura = null;
+        } else {
+          schedaPersonaggio.equipaggiamento[categoria] =
+            schedaPersonaggio.equipaggiamento[categoria].filter(n => n !== item.nome);
+        }
+      }
+
+      aggiornaOutput();
     });
 
-    return blocco;
+    label.appendChild(checkbox);
+    label.append(` ${item.nome} – ${item.descrizione}`);
+    return label;
+  }
+
+  function puòUsare(item) {
+    const classe = schedaPersonaggio.classe;
+    if (!item.proficienza) return true;
+    return item.proficienza.includes(classe);
   }
 
   function aggiornaOutput() {
-    if (schedaPersonaggio.equipaggiamento.length === 0) {
-      output.innerHTML = "🎒 Nessun equipaggiamento selezionato.";
-    } else {
-      const elenco = schedaPersonaggio.equipaggiamento.map(e => `<li><strong>${e.nome}</strong> (${e.tipo}): ${e.descrizione}</li>`).join('');
-      output.innerHTML = `<ul>${elenco}</ul>`;
-    }
+    const { armi, armatura, oggetti } = schedaPersonaggio.equipaggiamento;
+    output.innerHTML = `
+      <p><strong>Armi:</strong> ${armi.join(', ') || '—'}</p>
+      <p><strong>Armatura:</strong> ${armatura || '—'}</p>
+      <p><strong>Oggetti:</strong> ${oggetti.join(', ') || '—'}</p>
+    `;
+  }
+
+  function creaSezione(titolo, lista, categoria, limite) {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `<h3>${titolo}</h3>`;
+    lista.forEach(item => {
+      wrapper.appendChild(creaCheckbox(item, categoria, limite));
+      wrapper.appendChild(document.createElement('br'));
+    });
+    return wrapper;
   }
 
   container.innerHTML = '';
-  container.appendChild(creaBlocco("⚔️ Armi", dbArmi, "arma", maxArmi));
-  container.appendChild(creaBlocco("🛡️ Armature", dbArmature, "armatura", maxArmature));
-  container.appendChild(creaBlocco("🎒 Oggetti", dbOggetti, "oggetto", maxOggetti));
-  container.appendChild(output);
+  container.appendChild(creaSezione('Armi', dbArmi, 'armi', 2));
+  container.appendChild(creaSezione('Armature', dbArmature, 'armatura', 1));
+  container.appendChild(creaSezione('Oggetti', dbOggetti, 'oggetti', 3));
+  aggiornaOutput();
 }
