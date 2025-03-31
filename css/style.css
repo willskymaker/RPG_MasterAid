@@ -1,106 +1,105 @@
 body {
-  font-family: "Segoe UI", sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 20px;
   background-color: #f7f7f7;
-  color: #333;
-  margin: 0;
-  padding: 20px;
+  color: #222;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 30px;
+  font-size: 2.2em;
+  margin-bottom: 10px;
 }
 
 h2 {
-  margin-top: 30px;
-  margin-bottom: 10px;
+  font-size: 1.3em;
   color: #444;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 4px;
+  margin-top: 20px;
 }
 
-#app {
+.griglia-moduli {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
   gap: 20px;
+  flex-wrap: wrap;
+}
+
+.colonna {
+  flex: 1;
+  min-width: 320px;
 }
 
 section {
-  flex: 1 1 400px;
-  max-width: 600px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-/* Output generico */
-#app div[id$='output'] {
-  margin-top: 10px;
-  font-size: 16px;
-  font-style: italic;
-}
-
-/* Scroll per lista talenti */
-#generatore-talenti-container {
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
+  background: #fff;
   padding: 15px;
-  background-color: #fafafa;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-#generatore-talenti-container label {
-  display: block;
-  margin-bottom: 10px;
-  line-height: 1.4;
-  cursor: pointer;
-}
-
-/* Talento non selezionabile */
-.talento-disabilitato {
-  color: #888;
-  font-style: italic;
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Pulsanti generici */
 button {
-  background-color: #6e40c9;
+  background-color: #4a90e2;
   color: white;
-  padding: 8px 16px;
+  padding: 6px 10px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
+  margin-top: 5px;
   cursor: pointer;
-  font-size: 14px;
 }
 
 button:hover {
-  background-color: #512ba1;
+  background-color: #357ab8;
 }
-.scheda-output {
-  background-color: #fdf5e6;
-  border: 2px solid #8b4513;
+
+input[type="checkbox"],
+input[type="radio"] {
+  transform: scale(1.1);
+  margin-right: 5px;
+}
+
+label {
+  display: block;
+  margin-top: 4px;
+}
+
+.talento-disabilitato {
+  color: #999;
+  font-style: italic;
+}
+
+#scheda-personaggio-section {
+  margin-top: 40px;
   padding: 20px;
-  border-radius: 10px;
-  font-family: Georgia, serif;
-  margin-top: 20px;
-  box-shadow: 2px 2px 10px #ccc;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.scheda-output h3 {
-  margin-top: 10px;
-  color: #6b3e26;
+#scheda-personaggio-section h2 {
+  font-size: 1.5em;
+  border-color: #4a90e2;
 }
 
-.scheda-output ul {
-  list-style-type: none;
-  padding-left: 0;
+#scheda-personaggio-output > div {
+  margin-bottom: 15px;
 }
 
-.scheda-output li {
-  margin-bottom: 5px;
+#scheda-personaggio-output ul {
+  list-style: disc;
+  margin-left: 20px;
+  padding-left: 10px;
+}
+
+#selettore-modalita {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.1em;
+}
+
+.modulo-avanzato {
+  transition: all 0.3s ease-in-out;
 }
 

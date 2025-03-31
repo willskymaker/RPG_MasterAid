@@ -1,4 +1,5 @@
-// Inizializza jsPDF dalla libreria UMD se disponibile
+// js/generatoreSchedaFinale.js
+
 const { jsPDF } = window.jspdf || {};
 
 export function initGeneratoreSchedaFinale() {
@@ -49,10 +50,12 @@ export function initGeneratoreSchedaFinale() {
     container.appendChild(creaSezione("🎭 Background", background));
     container.appendChild(creaSezione("⚖️ Allineamento", allineamento));
 
-    const statHtml = Object.entries(caratteristiche).map(
-      ([stat, val]) => `<li>${stat}: <strong>${val}</strong> (mod: ${modificatori[stat] ?? 0})</li>`
-    ).join('');
-    container.appendChild(creaSezione("📊 Caratteristiche", `<ul>${statHtml}</ul>`));
+    if (Object.keys(caratteristiche).length > 0) {
+      const statHtml = Object.entries(caratteristiche).map(
+        ([stat, val]) => `<li>${stat}: <strong>${val}</strong> (mod: ${modificatori[stat] ?? 0})</li>`
+      ).join('');
+      container.appendChild(creaSezione("📊 Caratteristiche", `<ul>${statHtml}</ul>`));
+    }
 
     container.appendChild(creaSezione("🧠 Abilità", abilita.length ? abilita.join(", ") : "—"));
 
@@ -62,86 +65,67 @@ export function initGeneratoreSchedaFinale() {
     const talentiHtml = talenti.map(t => `<li><strong>${t.nome}</strong>: ${t.descrizione}</li>`).join('');
     if (talentiHtml) container.appendChild(creaSezione("✨ Talenti", `<ul>${talentiHtml}</ul>`));
 
-    container.appendChild(creaSezione("❤️ PF", pf));
-    container.appendChild(creaSezione("🛡️ CA", ca));
-    container.appendChild(creaSezione("🏃 Velocità", velocita + " piedi"));
+    container.appendChild(creaSezione("❤️ Punti Ferita", pf));
+    container.appendChild(creaSezione("🛡️ Classe Armatura", ca));
+    container.appendChild(creaSezione("🏃 Velocità", velocita ? velocita + " piedi" : "—"));
 
     const equipHtml = equip.length ? equip.map(e => `<li>${e}</li>`).join('') : "—";
     container.appendChild(creaSezione("🎒 Equipaggiamento", `<ul>${equipHtml}</ul>`));
 
-    // Pulsante Esporta PDF
-    if (jsPDF) {
-      const btnPDF = document.createElement('button');
-      btnPDF.textContent = "📄 Esporta PDF";
-      btnPDF.style.marginTop = '20px';
-      btnPDF.addEventListener('click', () => esportaPDF(scheda));
-      container.appendChild(btnPDF);
-    } else {
-      const warning = document.createElement('p');
-      warning.textContent = "⚠️ PDF non disponibile. Libreria jsPDF non caricata.";
-      warning.style.color = 'red';
-      container.appendChild(warning);
-    }
+    // Pulsante per esportare in PDF
+    const btnExport = document.createElement('button');
+    btnExport.textContent = "📄 Esporta in PDF";
+    btnExport.addEventListener('click', () => esportaPDF(scheda));
+    container.appendChild(btnExport);
   }
 
   function esportaPDF(scheda) {
+    if (!jsPDF) {
+      alert("Errore: jsPDF non disponibile.");
+      return;
+    }
+
     const doc = new jsPDF();
     let y = 10;
 
-    const addLine = (text, spacing = 7) => {
-      doc.text(text, 10, y);
-      y += spacing;
-    };
+    const linee = [
+      `Nome: ${scheda.nome || '—'}`,
+      `Specie: ${scheda.specie || '—'}`,
+      `Classe: ${scheda.classe || '—'}`,
+      `Livello: ${scheda.livello || '—'}`,
+      `Background: ${scheda.background || '—'}`,
+      `Allineamento: ${scheda.allineamento || '—'}`,
+      ` `,
+      `Caratteristiche:`,
+      ...Object.entries(scheda.caratteristiche || {}).map(([stat, val]) =>
+        `- ${stat}: ${val} (mod: ${scheda.modificatori?.[stat] ?? 0})`),
+      ` `,
+      `Abilità: ${scheda.abilitaClasse?.join(", ") || '—'}`,
+      `Tratti Classe:`,
+      ...(scheda.trattiClasse || []).map(t => `- ${t}`),
+      ` `,
+      `Talenti:`,
+      ...(scheda.talenti || []).map(t => `- ${t.nome}: ${t.descrizione}`),
+      ` `,
+      `PF: ${scheda.hp || '—'} | CA: ${scheda.ca || '—'} | Velocità: ${scheda.velocita || '—'} piedi`,
+      ` `,
+      `Equipaggiamento:`,
+      ...(scheda.equipaggiamento || []).map(e => `- ${e}`)
+    ];
 
-    addLine("🧾 Scheda del Personaggio");
-    addLine(`Nome: ${scheda.nome || "—"}`);
-    addLine(`Specie: ${scheda.specie || "—"}`);
-    addLine(`Classe: ${scheda.classe || "—"}`);
-    addLine(`Livello: ${scheda.livello || "—"}`);
-    addLine(`Background: ${scheda.background || "—"}`);
-    addLine(`Allineamento: ${scheda.allineamento || "—"}`);
-    addLine("");
-
-    addLine("📊 Caratteristiche:");
-    const stats = scheda.caratteristiche || {};
-    const mods = scheda.modificatori || {};
-    Object.entries(stats).forEach(([stat, val]) => {
-      addLine(`• ${stat}: ${val} (mod: ${mods[stat] ?? 0})`);
+    linee.forEach(linea => {
+      if (y > 280) {
+        doc.addPage();
+        y = 10;
+      }
+      doc.text(linea, 10, y);
+      y += 7;
     });
 
-    addLine("");
-    addLine("🧠 Abilità: " + (scheda.abilitaClasse?.join(", ") || "—"));
-    addLine("");
-
-    if (scheda.trattiClasse?.length) {
-      addLine("💡 Tratti:");
-      scheda.trattiClasse.forEach(t => addLine(`- ${t}`));
-      addLine("");
-    }
-
-    if (scheda.talenti?.length) {
-      addLine("✨ Talenti:");
-      scheda.talenti.forEach(t => addLine(`- ${t.nome}: ${t.descrizione}`, 6));
-      addLine("");
-    }
-
-    addLine(`❤️ PF: ${scheda.hp || "—"}`);
-    addLine(`🛡️ CA: ${scheda.ca || "—"}`);
-    addLine(`🏃 Velocità: ${scheda.velocita || "—"} piedi`);
-
-    if (scheda.equipaggiamento?.length) {
-      addLine("");
-      addLine("🎒 Equipaggiamento:");
-      scheda.equipaggiamento.forEach(eq => addLine(`- ${eq}`));
-    }
-
-    doc.save("Scheda_Personaggio.pdf");
+    doc.save(`${scheda.nome || 'scheda_pg'}.pdf`);
   }
 
-  // Rende disponibile globalmente
   window.aggiornaSchedaFinale = aggiornaScheda;
-
-  // Inizializzazione immediata
   aggiornaScheda();
 }
 

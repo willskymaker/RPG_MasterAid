@@ -7,23 +7,22 @@
 </head>
 <body>
   <h1>🎲 RPG MasterAid</h1>
-  <section id="modalita-section">
-  <h2>Modalità di utilizzo</h2>
-  <div id="selettore-modalita">
-    <label>
-      <input type="radio" name="modalita" value="niubbo" checked>
-      👶 Niubbo
-    </label>
-    <label style="margin-left: 20px;">
-      <input type="radio" name="modalita" value="pro">
-      😎 Pro Player
-    </label>
-  </div>
-</section>
 
+  <section id="modalita-section">
+    <h2>Modalità di utilizzo</h2>
+    <div id="selettore-modalita">
+      <label>
+        <input type="radio" name="modalita" value="niubbo" checked>
+        👶 Niubbo
+      </label>
+      <label style="margin-left: 20px;">
+        <input type="radio" name="modalita" value="pro">
+        😎 Pro Player
+      </label>
+    </div>
+  </section>
 
   <div id="app" class="griglia-moduli">
-
     <!-- Colonna Sinistra -->
     <div class="colonna">
       <section id="generatore-nomi-section">
@@ -77,7 +76,7 @@
         <div id="generatore-hp-ca-output"></div>
       </section>
 
-      <section id="generatore-talenti-section">
+      <section id="generatore-talenti-section" class="modulo-avanzato">
         <h2>✨ Talenti</h2>
         <div id="generatore-talenti-container"></div>
         <div id="generatore-talenti-output"></div>
@@ -89,22 +88,20 @@
         <div id="generatore-equipaggiamento-output"></div>
       </section>
 
-      <section id="tiradadi-section">
+      <section id="tiradadi-section" class="modulo-avanzato">
         <h2>🎲 Tira Dadi</h2>
         <div id="tiradadi-buttons"></div>
         <div id="tiradadi-output"></div>
       </section>
-      
-      <section id="scheda-personaggio-section">
-        <h2>📜 Scheda del Personaggio</h2>
-        <div id="scheda-personaggio-output" class="scheda-output"></div>
-      </section>
-
     </div>
   </div>
- 
- <!-- Carica prima jsPDF -->
-  <script src="libs/jspdf.umd.min.js"></script>
+
+  <!-- Scheda finale -->
+  <section id="scheda-personaggio-section">
+    <h2>📜 Scheda Personaggio Finale</h2>
+    <div id="scheda-personaggio-output"></div>
+  </section>
+
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
