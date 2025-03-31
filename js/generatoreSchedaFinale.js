@@ -3,11 +3,10 @@
 
 export function initGeneratoreSchedaFinale() {
   const container = document.getElementById('scheda-personaggio-output');
-  if (container) container.innerHTML = ''; // rimuove ogni contenuto in pagina
-  window.aggiornaSchedaFinale = () => {}; // disattivato
+  if (container) container.innerHTML = '';
+  window.aggiornaSchedaFinale = () => {};
 }
 
-// ✅ Funzione per esportare il PDF
 export function esportaPDF(scheda) {
   const jsPDF = window.jspdf?.jsPDF;
   if (!jsPDF) {
@@ -40,7 +39,9 @@ export function esportaPDF(scheda) {
     `PF: ${scheda.hp || '—'} | CA: ${scheda.ca || '—'} | Velocità: ${scheda.velocita || '—'} piedi`,
     ``,
     `Equipaggiamento:`,
-    ...(scheda.equipaggiamento || []).map(e => `- ${e}`)
+    ...(Array.isArray(scheda.equipaggiamento)
+        ? scheda.equipaggiamento.map(e => `- ${e}`)
+        : [`- ${scheda.equipaggiamento || '—'}`])
   ];
 
   linee.forEach(linea => {
