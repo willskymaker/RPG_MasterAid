@@ -29,12 +29,14 @@ export function esportaPDF(scheda) {
     ...Object.entries(scheda.caratteristiche || {}).map(([stat, val]) =>
       `- ${stat}: ${val} (mod: ${scheda.modificatori?.[stat] ?? 0})`),
     ``,
-    `Abilità: ${scheda.abilitaClasse?.join(", ") || '—'}`,
+    `Abilità: ${Array.isArray(scheda.abilitaClasse) ? scheda.abilitaClasse.join(", ") : '—'}`,
     `Tratti Classe:`,
-    ...(scheda.trattiClasse || []).map(t => `- ${t}`),
+    ...(Array.isArray(scheda.trattiClasse) ? scheda.trattiClasse.map(t => `- ${t}`) : [`—`]),
     ``,
     `Talenti:`,
-    ...(scheda.talenti || []).map(t => `- ${t.nome}: ${t.descrizione}`),
+    ...(Array.isArray(scheda.talenti)
+        ? scheda.talenti.map(t => `- ${t.nome}: ${t.descrizione}`)
+        : [`—`]),
     ``,
     `PF: ${scheda.hp || '—'} | CA: ${scheda.ca || '—'} | Velocità: ${scheda.velocita || '—'} piedi`,
     ``,
