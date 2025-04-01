@@ -24,9 +24,9 @@ export function esportaPDF(scheda) {
     `Livello: ${scheda.livello || '—'}`,
     `Background: ${
       typeof scheda.background === 'object'
-        ? \`\${scheda.background.nome || '—'} - \${scheda.background.descrizione || ''}\`
+        ? `${scheda.background.nome || '—'} - ${scheda.background.descrizione || ''}`
         : scheda.background || '—'
-     }`,
+    }`,
     `Allineamento: ${scheda.allineamento || '—'}`,
     ``,
     `Caratteristiche:`,
