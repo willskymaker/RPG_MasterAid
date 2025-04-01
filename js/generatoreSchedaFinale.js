@@ -22,7 +22,11 @@ export function esportaPDF(scheda) {
     `Specie: ${scheda.specie || '—'}`,
     `Classe: ${scheda.classe || '—'}`,
     `Livello: ${scheda.livello || '—'}`,
-    `Background: ${scheda.background || '—'}`,
+    `Background: ${
+      typeof scheda.background === 'object'
+        ? \`\${scheda.background.nome || '—'} - \${scheda.background.descrizione || ''}\`
+        : scheda.background || '—'
+     }`,
     `Allineamento: ${scheda.allineamento || '—'}`,
     ``,
     `Caratteristiche:`,
