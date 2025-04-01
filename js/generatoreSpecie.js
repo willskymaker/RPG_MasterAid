@@ -1,18 +1,29 @@
+// js/generatoreSpecie.js
+import { dbSpecie } from './data/dbSpecie.js';
+
 export function initGeneratoreSpecie() {
   const container = document.getElementById('generatore-specie-container');
   const output = document.getElementById('generatore-specie-output');
-
-  const specie = [
-    "Umano", "Elfo", "Nano", "Halfling", "Dragonide",
-    "Tiefling", "Goliath", "Orco", "Gnomo", "Ardling", "Aasimar"
-  ];
-
   const caratteristiche = ['FOR', 'DES', 'COS', 'INT', 'SAG', 'CAR'];
-  const bonusContainer = document.createElement('div');
-  bonusContainer.style.marginTop = '10px';
+
+  const selectSpecie = document.createElement('select');
+  const selectSottospecie = document.createElement('select');
+  selectSottospecie.style.display = 'none';
+  const optionDefault = document.createElement('option');
+  optionDefault.textContent = "-- Seleziona una specie --";
+  optionDefault.disabled = true;
+  optionDefault.selected = true;
+  selectSpecie.appendChild(optionDefault);
+
+  const bonusOutput = document.createElement('div');
+  bonusOutput.style.marginTop = '10px';
 
   let metodoBonus = '+2/+1';
   let bonusSelezionati = {};
+
+  const bonusContainer = document.createElement('div');
+  bonusContainer.style.marginTop = '10px';
+  bonusContainer.style.display = 'none';
 
   const resetBonus = () => {
     bonusSelezionati = {};
@@ -70,30 +81,34 @@ export function initGeneratoreSpecie() {
   };
 
   const salvaInScheda = () => {
+    const specie = dbSpecie.find(s => s.nome === selectSpecie.value);
+    const sottospecie = specie?.sottospecie?.find(ss => ss.nome === selectSottospecie.value);
+
     window.schedaPersonaggio = window.schedaPersonaggio || {};
-    schedaPersonaggio.specie = select.value || null;
-    schedaPersonaggio.bonusSpecie = bonusSelezionati;
+    schedaPersonaggio.specie = specie.nome;
+    schedaPersonaggio.taglia = specie.taglia;
+    schedaPersonaggio.velocita = specie.velocita;
+    schedaPersonaggio.scurovisione = specie.scurovisione;
+    schedaPersonaggio.trattiSpecie = [...(specie.tratti || []), ...(sottospecie?.tratti || [])];
+    schedaPersonaggio.competenzeSpecie = specie.competenze;
+    schedaPersonaggio.sottospecie = sottospecie?.nome || null;
+
+    if (specie.bonusCaratteristiche === "personalizzabile") {
+      schedaPersonaggio.bonusSpecie = bonusSelezionati;
+    } else {
+      schedaPersonaggio.bonusSpecie = {
+        ...specie.bonusCaratteristiche,
+        ...(sottospecie?.bonusCaratteristiche || {})
+      };
+    }
   };
 
-  const select = document.createElement('select');
-  const optionDefault = document.createElement('option');
-  optionDefault.textContent = "-- Seleziona una specie --";
-  optionDefault.disabled = true;
-  optionDefault.selected = true;
-  select.appendChild(optionDefault);
-
-  specie.forEach(s => {
+  dbSpecie.forEach(s => {
     const opt = document.createElement('option');
-    opt.value = s;
-    opt.textContent = s;
-    select.appendChild(opt);
+    opt.value = s.nome;
+    opt.textContent = s.nome;
+    selectSpecie.appendChild(opt);
   });
-
-  const btnRandom = document.createElement('button');
-  btnRandom.textContent = "🎲 Genera casualmente";
-
-  const bonusOutput = document.createElement('div');
-  bonusOutput.style.marginTop = '10px';
 
   const radioWrapper = document.createElement('div');
   radioWrapper.innerHTML = `
@@ -105,31 +120,49 @@ export function initGeneratoreSpecie() {
     resetBonus();
   });
 
-  btnRandom.addEventListener('click', () => {
-    const scelta = specie[Math.floor(Math.random() * specie.length)];
-    select.value = scelta;
-    output.textContent = `🧬 Specie: ${scelta}`;
-    bonusContainer.style.display = 'block';
+  selectSpecie.addEventListener('change', () => {
+    const specie = dbSpecie.find(s => s.nome === selectSpecie.value);
+    output.textContent = `🧬 Specie: ${specie.nome}`;
+    bonusContainer.style.display = specie.bonusCaratteristiche === "personalizzabile" ? 'block' : 'none';
+
+    // sottospecie
+    if (specie.sottospecie) {
+      selectSottospecie.innerHTML = '';
+      specie.sottospecie.forEach(ss => {
+        const opt = document.createElement('option');
+        opt.value = ss.nome;
+        opt.textContent = ss.nome;
+        selectSottospecie.appendChild(opt);
+      });
+      selectSottospecie.style.display = 'block';
+    } else {
+      selectSottospecie.style.display = 'none';
+    }
+
     resetBonus();
     salvaInScheda();
-    if (window.aggiornaTalenti) window.aggiornaTalenti(); // ✅ AGGIUNTO
+    if (window.aggiornaTalenti) window.aggiornaTalenti();
   });
 
-  select.addEventListener('change', () => {
-    output.textContent = `🧬 Specie: ${select.value}`;
-    bonusContainer.style.display = 'block';
+  selectSottospecie.addEventListener('change', () => {
     resetBonus();
     salvaInScheda();
-    if (window.aggiornaTalenti) window.aggiornaTalenti(); // ✅ AGGIUNTO
+  });
+
+  const btnRandom = document.createElement('button');
+  btnRandom.textContent = "🎲 Genera casualmente";
+  btnRandom.addEventListener('click', () => {
+    const specie = dbSpecie[Math.floor(Math.random() * dbSpecie.length)];
+    selectSpecie.value = specie.nome;
+    selectSpecie.dispatchEvent(new Event('change'));
   });
 
   bonusContainer.appendChild(radioWrapper);
   bonusContainer.appendChild(creaBottoniCaratteristiche());
   bonusContainer.appendChild(bonusOutput);
-  bonusContainer.style.display = 'none';
 
-  container.appendChild(select);
+  container.appendChild(selectSpecie);
+  container.appendChild(selectSottospecie);
   container.appendChild(btnRandom);
   container.appendChild(bonusContainer);
 }
-
